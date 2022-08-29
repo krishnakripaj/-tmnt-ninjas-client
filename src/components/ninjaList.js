@@ -1,12 +1,38 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import Ninja from "./ninja";
 
 const NinjaList = () => {
-  const [ninjaArr, setNinjaArr] = useState([
-    { id: 1, name: "Leo", likeCount: 10 },
-    { id: 2, name: "Mike", likeCount: 20 },
-    { id: 3, name: "Don", likeCount: 30 },
-  ]);
+  const [ninjaArr, setNinjaArr] = useState([]);
+
+  const getAllNinjas = async () => {
+    const { data } = await axios.get("http://localhost:5000/api/ninjas");
+    let ninjas = data.map((ninja) => {
+      return {
+        id: ninja._id,
+        imgUrl: ninja.imgUrl,
+        name: ninja.name,
+        nickname: ninja.nickname,
+        likeCount: ninja.likeCount,
+        abilities: ninja.abilities,
+        dob: ninja.dob,
+        isMutant: ninja.isMutant,
+      };
+    });
+    setNinjaArr(ninjas);
+  };
+
+  const deleteNinja = async (ninjaId) => {
+    await axios.delete(`http://localhost:5000/api/ninjas/${ninjaId}`);
+    let filteredArr = ninjaArr.filter((ninja) => {
+      return ninja.id !== ninjaId;
+    });
+    setNinjaArr(filteredArr);
+  };
+
+  useEffect(() => {
+    getAllNinjas();
+  }, []);
 
   return (
     <div className="row">
@@ -15,9 +41,10 @@ const NinjaList = () => {
           <div className="col" key={ninja.id}>
             <Ninja
               key={ninja.id}
-              likeCount={ninja.likeCount}
-              name = {ninja.name}
-              message={"Hey From Parent"}
+              ninja={ninja}
+              onDelete={() => {
+                deleteNinja(ninja.id);
+              }}
             />
           </div>
         );
