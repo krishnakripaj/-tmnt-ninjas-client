@@ -30,6 +30,23 @@ const NinjaList = () => {
     setNinjaArr(filteredArr);
   };
 
+  const likeNinja = async (ninja) => {
+    try {
+      await axios.put(`http://localhost:5000/api/ninjas/${ninja.id}`, {
+        likeCount: ninja.likeCount + 1,
+      });
+      let allNinjas = [...ninjaArr]; // making a clone of ninjaArr and passing that to allNinjas
+      let index = allNinjas.indexOf(ninja);
+      allNinjas[index] = { ...ninja }; // passing a clone of ninjas obj to
+      allNinjas[index].likeCount++;
+      setNinjaArr(allNinjas);
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
+  // TODO: Implement POST method and GET with Param
+
   useEffect(() => {
     getAllNinjas();
   }, []);
@@ -42,6 +59,9 @@ const NinjaList = () => {
             <Ninja
               key={ninja.id}
               ninja={ninja}
+              onLike={() => {
+                likeNinja(ninja);
+              }}
               onDelete={() => {
                 deleteNinja(ninja.id);
               }}

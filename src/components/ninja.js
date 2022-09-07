@@ -30,7 +30,7 @@ const Ninja = (props) => {
               return <li key={index}>{move}</li>;
             })}
           </ul>
-          <a className="btn btn-primary">
+          <a className="btn btn-primary" onClick={props.onLike}>
             Like{" "}
             <span className="badge text-bg-light">{props.ninja.likeCount}</span>
           </a>{" "}
